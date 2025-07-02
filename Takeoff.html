@@ -125,6 +125,13 @@
 
   <br>
 
+  <div id="pdf-preview-container" style="width:80%;max-width:900px;height:600px;margin:30px 0 30px 20px;display:flex;justify-content:center;align-items:center;position:relative;">
+    <label for="pdf-upload" id="pdf-upload-label" style="width:100%;height:100%;border:2px dashed #888;background:#fafaff;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;position:absolute;top:0;left:0;">
+      <span id="pdf-upload-text" style="font-size:1.2em;color:#555;">Click or drag a PDF file here to upload</span>
+      <input id="pdf-upload" type="file" accept="application/pdf" style="display:none;">
+    </label>
+  </div>
+
   <h2 style="margin-left:20px; color: purple;">Estimation</h2>
   <table id="cost-table">
     <tr>
@@ -189,6 +196,60 @@
     // Attach event listeners to initial cost row
     document.querySelectorAll('#cost-table tr:last-child input').forEach(input => {
       input.addEventListener('input', addCostRowIfNeeded);
+    });
+  </script>
+
+  <script>
+    // --- PDF Preview Logic ---
+    const pdfUpload = document.getElementById('pdf-upload');
+    const pdfPreviewContainer = document.getElementById('pdf-preview-container');
+    const pdfUploadLabel = document.getElementById('pdf-upload-label');
+    const pdfUploadText = document.getElementById('pdf-upload-text');
+
+    pdfUpload.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file && file.type === 'application/pdf') {
+        const fileURL = URL.createObjectURL(file);
+        // Remove previous iframe if exists
+        let existingIframe = pdfPreviewContainer.querySelector('iframe');
+        if (existingIframe) existingIframe.remove();
+        // Create and insert iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = fileURL + "#page=1";
+        iframe.style.position = "absolute";
+        iframe.style.top = "0";
+        iframe.style.left = "0";
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
+        iframe.style.border = "none";
+        iframe.style.background = "#fff";
+        iframe.style.zIndex = "2";
+        pdfPreviewContainer.appendChild(iframe);
+        // Hide the upload text and label
+        pdfUploadText.style.display = "none";
+        pdfUploadLabel.style.pointerEvents = "none";
+        pdfUploadLabel.style.opacity = "0";
+      }
+    });
+
+    // Optional: Drag & drop support for the label
+    pdfUploadLabel.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      pdfUploadLabel.style.background = "#e0e0ef";
+    });
+    pdfUploadLabel.addEventListener('dragleave', function (e) {
+      e.preventDefault();
+      pdfUploadLabel.style.background = "#fafaff";
+    });
+    pdfUploadLabel.addEventListener('drop', function (e) {
+      e.preventDefault();
+      pdfUploadLabel.style.background = "#fafaff";
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === 'application/pdf') {
+        pdfUpload.files = e.dataTransfer.files;
+        const event = new Event('change');
+        pdfUpload.dispatchEvent(event);
+      }
     });
   </script>
 
