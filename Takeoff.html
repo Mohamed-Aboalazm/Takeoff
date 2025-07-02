@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Styled Table</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 60%;
+      margin: 20px 0 20px 20px;
+      /* align left */
+      text-align: center;
+    }
+
+    th {
+      background-color: purple;
+      color: white;
+      padding: 10px;
+      border: 1px solid #fff;
+      /* white border */
+    }
+
+    td {
+      background-color: #E6E6FA;
+      /* light purple (lavender) */
+      padding: 10px;
+      border: 1px solid #fff;
+      /* white border */
+    }
+
+    tr:not(:last-child) td,
+    tr:not(:last-child) th {
+      border-bottom: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1 style="margin-left:20px; color: purple;">Take off</h1>
+  <table id="takeoff-table">
+    <tr>
+      <th>Colour</th>
+      <th>#</th>
+      <th>Description</th>
+      <th>Qty</th>
+      <th>Unit</th>
+    </tr>
+    <tr>
+      <td>
+        <select style="width:100%">
+          <option value="">Select</option>
+          <option value="Red" style="color:red;">Red</option>
+          <option value="Blue" style="color:blue;">Blue</option>
+          <option value="Green" style="color:green;">Green</option>
+          <option value="Yellow" style="color:gold;">Yellow</option>
+          <option value="Purple" style="color:purple;">Purple</option>
+          <option value="Orange" style="color:orange;">Orange</option>
+          <option value="Black" style="color:black;">Black</option>
+          <option value="White" style="color:gray;">White</option>
+        </select>
+      </td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+    </tr>
+    <!-- More rows will be added dynamically -->
+  </table>
+
+  <script>
+    const table = document.getElementById('takeoff-table');
+
+    function isRowFilled(row) {
+      // First cell is a select, rest are inputs
+      const cells = Array.from(row.cells);
+      const colorSelected = cells[0].querySelector('select').value.trim() !== '';
+      const othersFilled = Array.from(row.querySelectorAll('input')).every(input => input.value.trim() !== '');
+      return colorSelected && othersFilled;
+    }
+
+    function addRowIfNeeded() {
+      const rows = table.getElementsByTagName('tr');
+      const lastRow = rows[rows.length - 1];
+      const selects = lastRow.querySelectorAll('select');
+      if (selects.length === 0) return; // skip header row
+      if (isRowFilled(lastRow)) {
+        const newRow = table.insertRow(-1);
+        // Colour dropdown
+        const colorCell = newRow.insertCell(0);
+        const select = document.createElement('select');
+        select.style.width = '100%';
+        select.innerHTML = `
+          <option value="">Select</option>
+          <option value="Red" style="color:red;">Red</option>
+          <option value="Blue" style="color:blue;">Blue</option>
+          <option value="Green" style="color:green;">Green</option>
+          <option value="Yellow" style="color:gold;">Yellow</option>
+          <option value="Purple" style="color:purple;">Purple</option>
+          <option value="Orange" style="color:orange;">Orange</option>
+          <option value="Black" style="color:black;">Black</option>
+          <option value="White" style="color:gray;">White</option>
+        `;
+        select.addEventListener('input', addRowIfNeeded);
+        colorCell.appendChild(select);
+        // Other fields
+        for (let i = 1; i < 5; i++) {
+          const cell = newRow.insertCell(i);
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.style.width = '100%';
+          input.addEventListener('input', addRowIfNeeded);
+          cell.appendChild(input);
+        }
+      }
+    }
+
+    // Attach event listeners to initial row
+    document.querySelectorAll('#takeoff-table tr:last-child select, #takeoff-table tr:last-child input').forEach(el => {
+      el.addEventListener('input', addRowIfNeeded);
+    });
+  </script>
+
+  <br>
+
+  <h2 style="margin-left:20px; color: purple;">Estimation</h2>
+  <table id="cost-table">
+    <tr>
+      <th style="min-width:110px;">Division</th>
+      <th style="min-width:130px;">Description</th>
+      <th style="min-width:140px;">Takeoff Qty/Unit</th>
+      <th style="min-width:140px;">Labour Cost/Unit</th>
+      <th style="min-width:110px;">Labour Cost</th>
+      <th style="min-width:150px;">Material Cost/Unit</th>
+      <th style="min-width:120px;">Material Cost</th>
+      <th style="min-width:150px;">Sub Contract /Unit</th>
+      <th style="min-width:140px;">Sub Contract Cost</th>
+      <th style="min-width:130px;">Equip Cost/Unit</th>
+      <th style="min-width:110px;">Equip Cost</th>
+      <th style="min-width:140px;">Total Cost/Unit</th>
+      <th style="min-width:110px;">Total Cost</th>
+    </tr>
+    <tr>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+      <td><input type="text" style="width:100%"></td>
+    </tr>
+    <!-- More rows will be added dynamically -->
+  </table>
+
+  <script>
+    // --- Cost Table Dynamic Row Logic ---
+    const costTable = document.getElementById('cost-table');
+
+    function isCostRowFilled(row) {
+      return Array.from(row.querySelectorAll('input')).every(input => input.value.trim() !== '');
+    }
+
+    function addCostRowIfNeeded() {
+      const rows = costTable.getElementsByTagName('tr');
+      const lastRow = rows[rows.length - 1];
+      const inputs = lastRow.querySelectorAll('input');
+      if (inputs.length === 0) return; // skip header row
+      if (isCostRowFilled(lastRow)) {
+        const newRow = costTable.insertRow(-1);
+        for (let i = 0; i < 14; i++) {
+          const cell = newRow.insertCell(i);
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.style.width = '100%';
+          input.addEventListener('input', addCostRowIfNeeded);
+          cell.appendChild(input);
+        }
+      }
+    }
+
+    // Attach event listeners to initial cost row
+    document.querySelectorAll('#cost-table tr:last-child input').forEach(input => {
+      input.addEventListener('input', addCostRowIfNeeded);
+    });
+  </script>
+
+</body>
+
+</html>
